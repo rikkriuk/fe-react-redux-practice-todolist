@@ -1,31 +1,32 @@
 // src/components/TodoInput.js
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addTodo, updateTodo } from "../redux/todos/actions";
+import { addTodo, updatedTodo } from "../redux/async/todos/actions";
 import { changeLanguage } from "../redux/lang/action";
 import { changeTheme } from "../redux/theme/action";
+import { v4 as uuidv4 } from "uuid";
 
 const TodoInput = () => {
   const dispatch = useDispatch();
   const [text, setText] = useState("");
   const lan = useSelector((state) => state.lang.lang);
-  const todoEdit = useSelector((state) => state.todos.edit);
+  const { edit } = useSelector((state) => state.todos);
   const theme = useSelector((state) => state.theme.theme);
 
   useEffect(() => {
-    if (todoEdit) {
-      setText(todoEdit.text);
+    if (edit) {
+      setText(edit.text);
     } else {
       setText("");
     }
-  }, [todoEdit]);
+  }, [edit]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (todoEdit) {
-      dispatch(updateTodo({ id: todoEdit.id, text }));
+    if (edit) {
+      dispatch(updatedTodo({ ...edit, text }));
     } else {
-      dispatch(addTodo({ id: Date.now(), text, completed: false }));
+      dispatch(addTodo({ id: uuidv4, text, completed: false }));
     }
     setText("");
   };
@@ -42,11 +43,11 @@ const TodoInput = () => {
           placeholder={lan === "en" ? "Add a new task..." : "Tambahkan tugas baru..."}
           required
         />
-        <button type="submit" className={`btn ${todoEdit ? "btn-warning" : "btn-primary"}`}
+        <button type="submit" className={`btn ${edit ? "btn-warning" : "btn-primary"}`}
         >
           {lan === "en" 
-            ? (todoEdit ? "Update" : "Add") 
-            : (todoEdit ? "Ubah" : "Tambah")}
+            ? (edit ? "Update" : "Add") 
+            : (edit ? "Ubah" : "Tambah")}
         </button>
       </form>
 

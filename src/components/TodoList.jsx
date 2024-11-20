@@ -1,14 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { completedTodo, deleteTodo, editedTodo } from "../redux/todos/actions"
+import { fetchTodos, deleteTodo, editedTodo, updatedTodo } from "../redux/async/todos/actions";
 
 const TodoList = () => {
-  const todos = useSelector((state) => state.todos.todos);
+  const { todos, loading, error, isSuccess } = useSelector((state) => state.todos);
   const dispatch = useDispatch();
   const lan = useSelector((state) => state.lang.lang);
 
+  // get data
+  useEffect(() => {
+    dispatch(fetchTodos());
+  }, [dispatch]);
+
+  // get data when isSuccess true
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(fetchTodos());
+    }
+  }, [isSuccess]);
+
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
+
+  if (error) {
+    return <h1>{error}</h1>;
+  }
+
+  if (todos.length === 0) {
+    return <h1>No todos</h1>;
+  }
+
   return (
-    <ul className="list-group">
+    <ul className="list-group ">
       {todos?.map((todo) => (
         <li
           key={todo.id}
@@ -26,8 +50,8 @@ const TodoList = () => {
           </span>
 
           <div className="d-flex gap-3">
-            <input onChange={() => dispatch(completedTodo(todo.id))} type="checkbox" name="checkbox" checked={todo.completed} />
-            <button onClick={() => dispatch(editedTodo(todo.id))} className="btn btn-warning btn-sm">
+            <input onChange={() => dispatch(updatedTodo(todo, true))} type="checkbox" name="checkbox" checked={todo.completed} />
+            <button onClick={() => dispatch(editedTodo(todo))} className="btn btn-warning btn-sm">
               {lan === "en" ? "Edit" : "Ubah"}
             </button>
             <button

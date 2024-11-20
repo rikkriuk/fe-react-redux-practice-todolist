@@ -1,0 +1,19 @@
+{
+  "todos": [
+    {
+      "id": "1",
+      "text": "Learn React",
+      "completed": true
+    },
+    {
+      "id": "087a",
+      "text": "Build a To-Do List",
+      "completed": true
+    },
+    {
+      "id": "6cd4",
+      "text": "Nguli",
+      "completed": false
+    }
+  ]
+}
